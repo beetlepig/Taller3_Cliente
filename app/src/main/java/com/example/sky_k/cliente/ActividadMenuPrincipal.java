@@ -20,11 +20,21 @@ public class ActividadMenuPrincipal extends AppCompatActivity {
         TextView usuario = (TextView) findViewById(R.id.tv_txt_usuario_menuPrincipal);
         usuario.setText(usuarioLogeado);
 
-        Button btnIrAlChat =  (Button) findViewById(R.id.btn_ir_alChat);
+        Button btnIrAlChat =  (Button) findViewById(R.id.btn_Muro);
+        Button btnPostear =  (Button) findViewById(R.id.btn_Postear);
         btnIrAlChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i =  new Intent(getApplicationContext(), ActividadChat.class);
+                Intent i =  new Intent(getApplicationContext(), HomeActivity.class);
+                i.putExtra("user", usuarioLogeado);
+                startActivity(i);
+            }
+        });
+
+        btnPostear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i =  new Intent(getApplicationContext(), PostActivity.class);
                 i.putExtra("user", usuarioLogeado);
                 startActivity(i);
             }

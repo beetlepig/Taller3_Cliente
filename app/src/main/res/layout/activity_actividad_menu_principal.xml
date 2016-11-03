@@ -7,7 +7,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="co.edu.dmi.monk.ejemploaplicacionlogin.ActividadMenuPrincipal">
+    tools:context="com.example.sky_k.cliente.ActividadMenuPrincipal">
 
     <TextView
         android:layout_width="wrap_content"
@@ -32,8 +32,17 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ir al chat"
-        android:id="@+id/btn_ir_alChat"
+        android:text='Ir al "Muro"'
+        android:id="@+id/btn_Muro"
         android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Postear"
+        android:id="@+id/btn_Postear"
+        android:layout_marginTop="23dp"
+        android:layout_below="@+id/btn_Muro"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
