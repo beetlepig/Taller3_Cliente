@@ -21,27 +21,35 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.jar.Manifest;
 
+import Serializable.Post;
+
 public class PostActivity extends AppCompatActivity {
-Button btnImg;
+    Button btnImg;
+    Button btnSendPost;
+    EditText contenidoPost;
     private String APP_DIRECTORY = "Intrigue/";
     private String MEDIA_DIRECTORY= APP_DIRECTORY + "Pictures";
-    private String TEMPORAL_PICTURE_NAME = "temporal.jpg";
+   // private String TEMPORAL_PICTURE_NAME = "temporal.jpg";
     private final int PERMISOS= 100;
     private final int PHOTO_CODE = 200;
     private final int SELECT_PICTURE = 300;
     private final CharSequence[] OPCIONES= {"Capturar Fotografia","Elegir de la Galeria","Cancelar"};
     private AlertDialog.Builder ventanaDialogo;
     private String mPath;
+    private String name;
 
     Bitmap img;
+    byte[] imgSer;
 
     private RelativeLayout rLayout;
 
@@ -49,13 +57,48 @@ Button btnImg;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+        Intent lanzador = getIntent();
+        name = lanzador.getStringExtra("user");
+
         btnImg= (Button) findViewById(R.id.btn_LoadImage);
+        btnSendPost= (Button) findViewById(R.id.btn_SendPost);
         rLayout= (RelativeLayout) findViewById(R.id.activity_post);
+        contenidoPost= (EditText) findViewById(R.id.text_Post);
+
         if(PermisosAceptados()){
             btnImg.setEnabled(true);
         }else {
             btnImg.setEnabled(false);
         }
+
+        btnSendPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(img!=null && contenidoPost.toString()!=null){
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            Post postAEnviar= new Post(name,"0-0-0-0",contenidoPost.toString(),imgSer);
+                            Comunicacion.getInstance().enviarObjeto(postAEnviar);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(PostActivity.this,"PostEnviado",Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+                        }
+                    }).start();
+
+
+
+                }else{
+                    Toast.makeText(PostActivity.this,"Selecciona una imagen e ingresa una descripcion",Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
 
         btnImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,6 +174,15 @@ Button btnImg;
                     });
 
                     img= BitmapFactory.decodeFile(mPath);
+                   new Thread(new Runnable() {
+                       @Override
+                       public void run() {
+                           ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                           img.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                           imgSer = stream.toByteArray();
+                       }
+                   }).start();
+
                     System.out.println("bitmap Guardado");
                     break;
 
@@ -138,6 +190,14 @@ Button btnImg;
                       Uri imagenDeGaleria= data.getData();
                     try {
                         img= MediaStore.Images.Media.getBitmap(this.getContentResolver(),imagenDeGaleria);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                img.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                imgSer = stream.toByteArray();
+                            }
+                        }).start();
                         System.out.println("bitmap Guardado");
                     } catch (IOException e) {
                         e.printStackTrace();

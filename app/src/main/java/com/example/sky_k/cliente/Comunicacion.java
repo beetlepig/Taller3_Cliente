@@ -2,9 +2,12 @@ package com.example.sky_k.cliente;
 
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -57,7 +60,7 @@ public class Comunicacion extends Observable implements Runnable {
                                 s.close();
                             } catch (IOException e) {
                                 Log.d(TAG, "[ SE RESETEÓ LA CONEXIÓN CON EL SERVIDOR ]");
-                                //e.printStackTrace();
+                                e.printStackTrace();
                             } finally {
                                 s = null;
                             }
@@ -75,6 +78,7 @@ public class Comunicacion extends Observable implements Runnable {
                 //Log.d(TAG, "[ SE PERDIÓ LA CONEXIÓN CON EL SERVIDOR ]");
                 //corriendo = false;
             } catch (IOException e) {
+                e.printStackTrace();
                 Log.d(TAG, "[ SE PERDIÓ LA CONEXIÓN CON EL SERVIDOR ]");
                 //notifyObservers("no_conectado");
                 //clearChanged();
@@ -188,6 +192,25 @@ public class Comunicacion extends Observable implements Runnable {
                 Log.d(TAG, "[ ERROR AL ENVIAR ]");
             }
         }else{
+            setChanged();
+            notifyObservers("no_conectado");
+            clearChanged();
+        }
+    }
+
+    public void enviarObjeto(Object o){
+        if(s!=null){
+            try {
+
+                ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+                out.writeObject(o);
+                out.flush();
+
+            } catch (IOException e) {
+                //e.printStackTrace();
+                Log.d(TAG, "[ ERROR AL ENVIAR ]");
+            }
+        }else {
             setChanged();
             notifyObservers("no_conectado");
             clearChanged();
