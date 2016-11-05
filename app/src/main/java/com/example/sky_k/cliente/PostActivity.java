@@ -157,8 +157,9 @@ public class PostActivity extends AppCompatActivity {
         File file = new File(Environment.getDataDirectory(), MEDIA_DIRECTORY);
         boolean isDirectoryCreated = file.exists();
 
-        if(!isDirectoryCreated)
+        if(!isDirectoryCreated) {
             isDirectoryCreated = file.mkdirs();
+        }
 
         if(isDirectoryCreated){
             Long timestamp = System.currentTimeMillis() / 1000;
