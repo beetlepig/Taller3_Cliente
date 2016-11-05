@@ -79,7 +79,12 @@ public class PostActivity extends AppCompatActivity {
                         @Override
                         public void run() {
 
-                            Post postAEnviar= new Post(name,"0-0-0-0",contenidoPost.toString(),imgSer);
+                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                    img.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                    imgSer = stream.toByteArray();
+
+
+                            Post postAEnviar= new Post(name,"0-0-0-0",contenidoPost.getText().toString(),imgSer);
                             Comunicacion.getInstance().enviarObjeto(postAEnviar);
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -174,14 +179,7 @@ public class PostActivity extends AppCompatActivity {
                     });
 
                     img= BitmapFactory.decodeFile(mPath);
-                   new Thread(new Runnable() {
-                       @Override
-                       public void run() {
-                           ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                           img.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                           imgSer = stream.toByteArray();
-                       }
-                   }).start();
+
 
                     System.out.println("bitmap Guardado");
                     break;
@@ -190,14 +188,7 @@ public class PostActivity extends AppCompatActivity {
                       Uri imagenDeGaleria= data.getData();
                     try {
                         img= MediaStore.Images.Media.getBitmap(this.getContentResolver(),imagenDeGaleria);
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                img.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                imgSer = stream.toByteArray();
-                            }
-                        }).start();
+
                         System.out.println("bitmap Guardado");
                     } catch (IOException e) {
                         e.printStackTrace();

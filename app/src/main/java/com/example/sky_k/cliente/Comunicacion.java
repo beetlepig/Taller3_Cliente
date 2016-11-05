@@ -184,8 +184,8 @@ public class Comunicacion extends Observable implements Runnable {
     public void enviar(String msn) {
         if(s != null) {
             try {
-                DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-                dos.writeUTF(msn);
+                ObjectOutputStream dos = new ObjectOutputStream(s.getOutputStream());
+                dos.writeObject(msn);
                 dos.flush();
             } catch (IOException e) {
                 //e.printStackTrace();
