@@ -6,13 +6,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Observable;
+import java.util.Vector;
+
+import Serializable.Post;
 
 /**
  * Created by josemoncada87 on 14/10/2015. *
@@ -38,7 +43,7 @@ public class Comunicacion extends Observable implements Runnable {
         notificoError = false;
     }
 
-    public static Comunicacion getInstance() {
+        public static Comunicacion getInstance() {
         if(ref == null){
             ref =  new Comunicacion();
             Thread t =  new Thread(ref);
@@ -73,21 +78,24 @@ public class Comunicacion extends Observable implements Runnable {
                         recibir();
                     }
                 }
-                Thread.sleep(500);
+                Thread.sleep(200);
             } catch (SocketTimeoutException e) {
                 //Log.d(TAG, "[ SE PERDIÓ LA CONEXIÓN CON EL SERVIDOR ]");
                 //corriendo = false;
+               // e.printStackTrace();
             } catch (IOException e) {
-                e.printStackTrace();
                 Log.d(TAG, "[ SE PERDIÓ LA CONEXIÓN CON EL SERVIDOR ]");
+                e.printStackTrace();
                 //notifyObservers("no_conectado");
                 //clearChanged();
                 //corriendo = false;
                 reintentar();
             } catch (InterruptedException e) {
-                // e.printStackTrace();
+                 e.printStackTrace();
                 setChanged();
                 Log.d(TAG, "[ INTERRUPCIÓN ]");
+            } catch (ClassNotFoundException e){
+                e.printStackTrace();
             }
         }
 
@@ -105,7 +113,7 @@ public class Comunicacion extends Observable implements Runnable {
         try {
             InetAddress dirServidor = InetAddress.getByName(ip);
             s = new Socket(dirServidor, puerto);
-            s.setSoTimeout(500);
+            s.setSoTimeout(2000);
             Log.d(TAG, "[ CONECTADO CON: " + s.toString() + " ]");
             setChanged();
             notifyObservers("conectado");
@@ -115,7 +123,7 @@ public class Comunicacion extends Observable implements Runnable {
             Log.d(TAG, "[ SERVIDOR DESCONOCIDO ]");
             return false;
         } catch (IOException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             Log.d(TAG, "[ ERROR AL ESTABLECER LA CONEXIÓN ]");
             if (!notificoError) {
                 setChanged();
@@ -128,12 +136,21 @@ public class Comunicacion extends Observable implements Runnable {
         return true;
     }
 
-    private void recibir() throws IOException {
-        DataInputStream dis = new DataInputStream(s.getInputStream());
-        String recibido = dis.readUTF();
-        manejarLogin(recibido);
-        manejarSignup(recibido);
-        manejarMensaje(recibido);
+    private void recibir() throws IOException, ClassNotFoundException{
+        System.out.println("entroRecibir");
+        ObjectInputStream dis = new ObjectInputStream(s.getInputStream());
+        Object in = dis.readObject();
+        if(in instanceof String) {
+            String recibido= (String) in;
+            manejarLogin(recibido);
+            manejarSignup(recibido);
+            manejarMensaje(recibido);
+        } else if(in instanceof ArrayList){
+            ArrayList<Post> p= (ArrayList<Post>) in;
+            setChanged();
+            notifyObservers(p);
+            clearChanged();
+        }
     }
 
     private void manejarMensaje(String recibido) {
@@ -184,7 +201,7 @@ public class Comunicacion extends Observable implements Runnable {
     public void enviar(String msn) {
         if(s != null) {
             try {
-                ObjectOutputStream dos = new ObjectOutputStream(s.getOutputStream());
+                    ObjectOutputStream dos = new ObjectOutputStream(s.getOutputStream());
                 dos.writeObject(msn);
                 dos.flush();
             } catch (IOException e) {
@@ -198,19 +215,17 @@ public class Comunicacion extends Observable implements Runnable {
         }
     }
 
-    public void enviarObjeto(Object o){
-        if(s!=null){
+    public void enviarObjeto(Object msn) {
+        if(s != null) {
             try {
-
-                ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-                out.writeObject(o);
-                out.flush();
-
+                ObjectOutputStream dos = new ObjectOutputStream(s.getOutputStream());
+                dos.writeObject(msn);
+                dos.flush();
             } catch (IOException e) {
                 //e.printStackTrace();
                 Log.d(TAG, "[ ERROR AL ENVIAR ]");
             }
-        }else {
+        }else{
             setChanged();
             notifyObservers("no_conectado");
             clearChanged();
@@ -231,3 +246,4 @@ public class Comunicacion extends Observable implements Runnable {
         this.puerto = puerto;
     }
 }
+

@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Comunicacion.getInstance();
         Comunicacion.getInstance().addObserver(this);
         mensajePantalla = "...";
         initBotonLogin();
@@ -70,7 +71,8 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-        String mensaje = (String) data;
+        if (data instanceof String){
+            String mensaje = (String) data;
         Log.d(TAG, "principal: " + observable.getClass() + " // " + mensaje);
         switch (mensaje) {
             case "usuario_no_existe":
@@ -96,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
             default:
                 break;
         }
+    }
     }
 
     private void mostrarMensajeToast(String mensajeAMostrar) {

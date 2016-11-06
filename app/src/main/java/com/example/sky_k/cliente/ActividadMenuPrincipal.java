@@ -20,9 +20,9 @@ public class ActividadMenuPrincipal extends AppCompatActivity {
         TextView usuario = (TextView) findViewById(R.id.tv_txt_usuario_menuPrincipal);
         usuario.setText(usuarioLogeado);
 
-        Button btnIrAlChat =  (Button) findViewById(R.id.btn_Muro);
+        Button btnMuro =  (Button) findViewById(R.id.btn_Muro);
         Button btnPostear =  (Button) findViewById(R.id.btn_Postear);
-        btnIrAlChat.setOnClickListener(new View.OnClickListener() {
+        btnMuro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i =  new Intent(getApplicationContext(), HomeActivity.class);
