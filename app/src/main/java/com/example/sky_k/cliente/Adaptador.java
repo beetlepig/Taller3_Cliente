@@ -2,6 +2,7 @@ package com.example.sky_k.cliente;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,9 +35,9 @@ List<Post> listaPosts;
 
     @Override
     public void onBindViewHolder(PostViewHolder holder, int position) {
-
      holder.img.setImageBitmap(BitmapFactory.decodeByteArray(listaPosts.get(position).imagen,0,listaPosts.get(position).imagen.length));
      holder.name.setText(listaPosts.get(position).nombreUsuario);
+        holder.descripcion.setText(listaPosts.get(position).contenidoPost);
     }
 
     @Override
@@ -47,10 +48,12 @@ List<Post> listaPosts;
     public static class PostViewHolder extends RecyclerView.ViewHolder{
         ImageView img;
         TextView name;
+        TextView descripcion;
         public PostViewHolder(View itemView) {
             super(itemView);
             img= (ImageView) itemView.findViewById(R.id.img_post);
             name= (TextView) itemView.findViewById(R.id.name_user_post);
+            descripcion= (TextView) itemView.findViewById(R.id.txt_descripcion);
         }
     }
 }
