@@ -4,6 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +20,13 @@ private ArrayList<Post> postes;
     RecyclerView rv;
     LinearLayoutManager llm;
     Adaptador ad;
+    ProgressBar pb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         postes= new ArrayList<>();
+        pb= (ProgressBar) findViewById(R.id.progress_loader);
         Comunicacion.getInstance().addObserver(this);
         pedirPostes();
 
@@ -51,6 +55,7 @@ private ArrayList<Post> postes;
                    rv.setLayoutManager(llm);
                    ad=new Adaptador(postes);
                    rv.setAdapter(ad);
+                   pb.setVisibility(View.INVISIBLE);
                }
            });
 

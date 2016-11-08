@@ -19,9 +19,6 @@ import java.util.Vector;
 
 import Serializable.Post;
 
-/**
- * Created by josemoncada87 on 14/10/2015. *
- */
 public class Comunicacion extends Observable implements Runnable {
 
     private static final String TAG = "Comunicacion";
@@ -102,7 +99,7 @@ public class Comunicacion extends Observable implements Runnable {
         try {
             s.close();
         } catch (IOException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             Log.d(TAG, "[ ERROR CERRANDO EL SOCKET ]");
         } finally {
             s = null;
