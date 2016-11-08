@@ -78,7 +78,7 @@ public class Comunicacion extends Observable implements Runnable {
                         recibir();
                     }
                 }
-                Thread.sleep(200);
+                Thread.sleep(33);
             } catch (SocketTimeoutException e) {
                 //Log.d(TAG, "[ SE PERDIÓ LA CONEXIÓN CON EL SERVIDOR ]");
                 //corriendo = false;
@@ -113,7 +113,7 @@ public class Comunicacion extends Observable implements Runnable {
         try {
             InetAddress dirServidor = InetAddress.getByName(ip);
             s = new Socket(dirServidor, puerto);
-            s.setSoTimeout(2000);
+            s.setSoTimeout(5000);
             Log.d(TAG, "[ CONECTADO CON: " + s.toString() + " ]");
             setChanged();
             notifyObservers("conectado");
